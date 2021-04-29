@@ -564,41 +564,19 @@ bool LoadMedia()
 				success = false;
 			}
 
-			if (!gCharacterTexture.LoadFromFile("imgs/character/player.png", gRenderer))
+			if (!gCharacterTexture.LoadFromFile("imgs/character/characterPremium.png", gRenderer))
 			{
 				std::cout << "Failed to load character_run image." << std::endl;
 				success = false;
 			}
 			else
 			{
-				gCharacterClips[0].x = 57 * 0;
-				gCharacterClips[0].y = 0;
-				gCharacterClips[0].w = 57;
-				gCharacterClips[0].h = 57;
-				gCharacterClips[1].x = 57 * 1;
-				gCharacterClips[1].y = 0;
-				gCharacterClips[1].w = 57;
-				gCharacterClips[1].h = 57;
-				gCharacterClips[2].x = 57 * 2;
-				gCharacterClips[2].y = 0;
-				gCharacterClips[2].w = 57;
-				gCharacterClips[2].h = 57;
-				gCharacterClips[3].x = 57 * 3;
-				gCharacterClips[3].y = 0;
-				gCharacterClips[3].w = 57;
-				gCharacterClips[3].h = 57;
-				gCharacterClips[4].x = 57 * 4;
-				gCharacterClips[4].y = 0;
-				gCharacterClips[4].w = 57;
-				gCharacterClips[4].h = 57;
-				gCharacterClips[5].x = 57 * 5;
-				gCharacterClips[5].y = 0;
-				gCharacterClips[5].w = 57;
-				gCharacterClips[5].h = 57;
-				gCharacterClips[6].x = 57 * 6;
-				gCharacterClips[6].y = 0;
-				gCharacterClips[6].w = 57;
-				gCharacterClips[6].h = 57;
+				for (int i = 0; i < 18; i++) {
+					gCharacterClips[i].x = 57 * i;
+					gCharacterClips[i].y = 0;
+					gCharacterClips[i].w = 57;
+					gCharacterClips[i].h = 57;
+				}
 			}
 			if (!gLoseTexture.LoadFromFile("imgs/background/lose.png", gRenderer))
 			{

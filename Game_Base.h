@@ -37,7 +37,7 @@
 #define IN_AIR_ENEMY 1
 #define ON_GROUND_ENEMY 0
 
-#define SLOW_FRAME_CHAR 4
+#define SLOW_FRAME_CHAR 2
 #define SLOW_FRAME_ENEMY 4
 
 #define IS_REPEATITIVE -1
@@ -88,7 +88,7 @@ const double LAYER_7_SPEED = 1.5;
 const double LAYER_8_SPEED = 1.75;
 const double LAYER_9_SPEED = 2.0;
 
-const int RUNNING_FRAMES = 7;
+const int RUNNING_FRAMES = 18;
 const int FLYING_FRAMES = 5;
 const int BACKGROUND_LAYER = 9;
 
