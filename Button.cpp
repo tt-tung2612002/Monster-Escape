@@ -62,7 +62,6 @@ bool Button::IsInside(SDL_Event *e, int size)
 	}
 	return false;
 }
-
 void Button::Render(SDL_Rect* currentClip, SDL_Renderer* gRenderer, LTexture gButtonTexture)
 {
 	gButtonTexture.Render(position.x, position.y, gRenderer, currentClip);

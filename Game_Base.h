@@ -36,7 +36,7 @@
 
 #define IN_AIR_ENEMY 1
 #define ON_GROUND_ENEMY 0
-
+#define GOLEM 2
 #define SLOW_FRAME_CHAR 2
 #define SLOW_FRAME_ENEMY 4
 

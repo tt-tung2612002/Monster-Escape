@@ -15,13 +15,21 @@
 class Enemy
 {
 public:
+	int type;
 	int posX, posY;
+	std::string pathID;
 	Enemy(int _type = 0);
 	
 	~Enemy();
 
 	void LoadFromFile(std::string path, SDL_Renderer* gRenderer);
-
+	void LoadFromProperties(SDL_Renderer* gRenderer);
+	void GenerateBat(Enemy& enemy,
+		SDL_Rect* gEnemyClips,
+		SDL_Renderer* gRenderer);
+	void GenerateGolem(Enemy& enemy,
+		SDL_Rect(&gEnemyClips)[12],
+		SDL_Renderer* gRenderer);
 	void Move(int acceleration);
 
 	void Render(SDL_Renderer* gRenderer, SDL_Rect* currentClip = nullptr);
@@ -42,7 +50,7 @@ private:
 
 	int eWidth, eHeight;
 
-	int type;
+
 
 	SDL_Texture *EnemyTexture;
 };

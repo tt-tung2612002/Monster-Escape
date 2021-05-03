@@ -4,6 +4,8 @@
 #include "Button.h"
 #include "Character.h"
 #include "Enemy.h"
+#include <vector>
+using namespace std;
 SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
 SDL_Color textColor = { 0, 0, 0 };
@@ -25,15 +27,15 @@ const std::string SCENCE1[BACKGROUND_LAYER] = {
 	"imgs/background/Scence_09.png",
 };
 const std::string SCENCE2[BACKGROUND_LAYER] = {
-	"imgs/background/Scence2_01.png",
-	"imgs/background/Scence2_02.png",
-	"imgs/background/Scence2_03.png",
-	"imgs/background/Scence2_04.png",
-	"imgs/background/Scence2_05.png",
-	"imgs/background/Scence2_06.png",
-	"imgs/background/Scence2_07.png",
-	"imgs/background/Scence2_08.png",
-	"imgs/background/Scence2_09.png",
+	"imgs/background/1.png",
+	"imgs/background/2.png",
+	"imgs/background/3.png",
+	"imgs/background/4.png",
+	"imgs/background/5.png",
+	"imgs/background/6.png",
+	"imgs/background/7.png",
+	"imgs/background/8.png",
+	"imgs/background/9.png",
 };
 
 const std::string SCENCE3[BACKGROUND_LAYER] = {
@@ -55,8 +57,11 @@ SDL_Rect gPauseButton[BUTTON_TOTAL];
 SDL_Rect gContinueButton[BUTTON_TOTAL];
 SDL_Rect gPlayAgainButton[BUTTON_TOTAL];
 SDL_Rect gCharacterClips[RUNNING_FRAMES];
-SDL_Rect gEnemyClips[FLYING_FRAMES];
-
+SDL_Rect gEnemyClips3[FLYING_FRAMES];
+SDL_Rect gEnemyClips1[12];
+SDL_Rect gEnemyClips2[12];
+//vector<SDL_Rect> gEnemyClips(FLYING_FRAMES);
+SDL_Rect gEnemyClipsGolem[18];
 LTexture gMenuTexture;
 LTexture gInstructionTexture;
 LTexture g_BackgroundTexture1[BACKGROUND_LAYER];
@@ -75,7 +80,6 @@ LTexture gText1Texture;
 LTexture gScoreTexture;
 LTexture gText2Texture;
 LTexture gHighScoreTexture;
-
 Button PlayButton(PLAY_BUTON_POSX, PLAY_BUTTON_POSY);
 Button HelpButton(HELP_BUTTON_POSX, HELP_BUTTON_POSY);
 Button ExitButton(EXIT_BUTTON_POSX, EXIT_BUTTON_POSY);
@@ -100,10 +104,6 @@ int main(int argc, char* argv[])
 		{
 			bool Quit_Menu = false;
 			bool Play_Again = false;
-			const int FPS = 60;
-			const int frameDelay = 1000 / FPS;
-			Uint32 frameStart;
-			int frameTime;
 			Mix_PlayMusic(gMenuMusic, IS_REPEATITIVE);
 			while (!Quit_Menu)
 			{
@@ -117,11 +117,11 @@ int main(int argc, char* argv[])
 
 					bool Quit_Game = false;
 					HandlePlayButton(&e_mouse, PlayButton, Quit_Menu, Play_Again, gClick);
-						
+
 					HandleHelpButton(&e_mouse, gBackButton,
-									 HelpButton, BackButton, 
-									 gInstructionTexture, gBackButtonTexture,
-									 gRenderer, Quit_Game, gClick);
+						HelpButton, BackButton,
+						gInstructionTexture, gBackButtonTexture,
+						gRenderer, Quit_Game, gClick);
 
 					HandleExitButton(&e_mouse, ExitButton, Quit_Menu, gClick);
 
@@ -130,24 +130,17 @@ int main(int argc, char* argv[])
 						return 0;
 					}
 				}
-
 				gMenuTexture.Render(0, 0, gRenderer);
-
 				SDL_Rect* currentClip_Play = &gPlayButton[PlayButton.currentSprite];
 				PlayButton.Render(currentClip_Play, gRenderer, gPlayButtonTexture);
-
 				SDL_Rect* currentClip_Help = &gHelpButton[HelpButton.currentSprite];
 				HelpButton.Render(currentClip_Help, gRenderer, gHelpButtonTexture);
-
 				SDL_Rect* currentClip_Exit = &gExitButton[ExitButton.currentSprite];
 				ExitButton.Render(currentClip_Exit, gRenderer, gExitButtonTexture);
-
 				SDL_RenderPresent(gRenderer);
 			}
-
 			while (Play_Again)
 			{
-
 				bool speedUp = false;
 				bool speedDown = false;
 				bool keyDown = false;
@@ -157,29 +150,28 @@ int main(int argc, char* argv[])
 				int acceleration = 0;
 				int frame_Character = 0;
 				int frame_Enemy = 0;
+				int frame_Enemy1 = 0;
+				int frame_Enemy2 = 0;
+				int frame_Enemy3 = 0;
 				std::string highscore = GetHighScoreFromFile("high_score.txt");
-				
 				SDL_Event e;
-				Enemy enemy1(ON_GROUND_ENEMY);
-				Enemy enemy2(ON_GROUND_ENEMY);
+				Enemy enemy1(GOLEM);
+				Enemy enemy2(GOLEM);
 				Enemy enemy3(IN_AIR_ENEMY);
-				
 				Mix_PlayMusic(gMusic, IS_REPEATITIVE);
-				GenerateEnemy(enemy1, enemy2, enemy3, gEnemyClips, gRenderer);
-
+				enemy1.GenerateGolem(enemy1,gEnemyClips1, gRenderer);
+				enemy2.GenerateGolem(enemy2, gEnemyClips2, gRenderer);
+				enemy3.GenerateBat(enemy3, gEnemyClips3, gRenderer);
 				int OffsetSpeed_Ground = BASE_OFFSET_SPEED;
-				std::vector <double> OffsetSpeed_Bkgr(BACKGROUND_LAYER, BASE_OFFSET_SPEED);				
-
+				std::vector <double> OffsetSpeed_Bkgr(BACKGROUND_LAYER, BASE_OFFSET_SPEED);
 				bool Quit = false;
 				bool Game_State = true;
 				while (!Quit)
 				{
-
-					frameStart = SDL_GetTicks();
 					if (Game_State)
 					{
 						UpdateGameTimeAndScore(time, acceleration, score);
-						
+
 						while (SDL_PollEvent(&e) != 0)
 						{
 							if (e.type == SDL_QUIT)
@@ -187,104 +179,76 @@ int main(int argc, char* argv[])
 								Quit = true;
 								Play_Again = false;
 							}
-							else if (e.type == SDL_KEYDOWN)
-							{
-								switch (e.key.keysym.sym)
-								{
-									case SDLK_RIGHT:
-									{
-										speedUp = true;
-									}
-									case SDLK_LEFT:
-									{
-										speedDown = true;
-									}
-									case SDLK_DOWN:
-										keyDown = true;
-								}
-							}
 							else HandlePauseButton(&e, gRenderer, gContinueButton,
-							PauseButton, ContinueButton,
-							gContinueButtonTexture, Game_State, gClick);
+								PauseButton, ContinueButton,
+								gContinueButtonTexture, Game_State, gClick);
 							character.HandleEvent(e, gJump);
-							
 						}
-						
 						SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 						SDL_RenderClear(gRenderer);
 						if ((score / 100) % 3 == 0)
 						{
+							enemy1.GenerateGolem(enemy1, gEnemyClips1, gRenderer);
+							enemy2.GenerateGolem(enemy2, gEnemyClips2, gRenderer);
+							enemy1.pathID = "imgs/enemy/golem.png";
+							enemy2.pathID = "imgs/enemy/golem.png";
 							RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture1, gRenderer);
-						}
-						else if ((score / 100) % 3 == 2)
-						{
-							RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
 						}
 						else if ((score / 100) % 3 == 1)
 						{
+							enemy1.GenerateGolem(enemy1, gEnemyClips1, gRenderer);
+							enemy2.GenerateGolem(enemy2, gEnemyClips2, gRenderer);
+							enemy1.pathID = "imgs/enemy/golem3.png";
+							enemy2.pathID = "imgs/enemy/golem3.png";
+							RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
+						}
+						else if ((score / 100) % 3 == 2)
+						{
+							enemy1.GenerateGolem(enemy1, gEnemyClips1, gRenderer);
+							enemy2.GenerateGolem(enemy2, gEnemyClips2, gRenderer);
+							enemy1.pathID = "imgs/enemy/golem2.png";
+							enemy2.pathID = "imgs/enemy/golem2.png";
 							RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
 						}
 						character.Move();
-
 						SDL_Rect* currentClip_Character = nullptr;
 						if (character.OnGround())
 						{
 							currentClip_Character = &gCharacterClips[frame_Character / SLOW_FRAME_CHAR];
 							character.Render(currentClip_Character, gRenderer, gCharacterTexture);
 						}
-						else if (character.GetPosY()<GROUND)
+						else if (character.GetPosY() < GROUND)
 						{
 							currentClip_Character = &gCharacterClips[0];
 							character.Render(currentClip_Character, gRenderer, gCharacterTexture);
 						}
-						SDL_Rect* currentClip_Enemy = &gEnemyClips[frame_Enemy / SLOW_FRAME_ENEMY];	
-						if (speedUp) {
-							enemy1.Move(acceleration+7);
-							enemy1.Render(gRenderer);
-							enemy2.Move(acceleration+7);
-							enemy2.Render(gRenderer);
-							enemy3.Move(acceleration+7);
-							enemy3.Render(gRenderer, currentClip_Enemy);
-							speedUp = false;
-						}
-						if (speedDown) {
-							enemy1.Move(acceleration - 1);
-							enemy1.Render(gRenderer);
-							enemy2.Move(acceleration - 1);
-							enemy2.Render(gRenderer);
-							enemy3.Move(acceleration - 1);
-							enemy3.Render(gRenderer, currentClip_Enemy);
-							speedDown = false;
-						}
-						else if (!speedUp || !speedDown) {
-							enemy1.Move(acceleration);
-							enemy1.Render(gRenderer);
-							enemy2.Move(acceleration);
-							enemy2.Render(gRenderer);
-							enemy3.Move(acceleration);
-							enemy3.Render(gRenderer, currentClip_Enemy);
-						}
+						SDL_Rect* currentClip_Enemy1 = &gEnemyClips1[frame_Enemy1 / SLOW_FRAME_ENEMY];	
+						SDL_Rect* currentClip_Enemy2 = &gEnemyClips2[frame_Enemy2/ SLOW_FRAME_ENEMY];
+						SDL_Rect* currentClip_Enemy3 = &gEnemyClips3[frame_Enemy3 / SLOW_FRAME_ENEMY];
+						enemy1.Move(acceleration);
+						enemy1.Render(gRenderer, currentClip_Enemy1);
+						enemy2.Move(acceleration);
+						enemy2.Render(gRenderer, currentClip_Enemy2);
+						enemy3.Move(acceleration);
+						enemy3.Render(gRenderer, currentClip_Enemy3);
 						SDL_Rect* currentClip_Pause = &gPauseButton[PauseButton.currentSprite];
 						PauseButton.Render(currentClip_Pause, gRenderer, gPauseButtonTexture);
 						DrawPlayerScore(gText1Texture, gScoreTexture, textColor, gRenderer, gFont, score);
 						DrawPlayerHighScore(gText2Texture, gHighScoreTexture, textColor, gRenderer, gFont, highscore);
-
 						if (CheckEnemyColission(character,
 							enemy1, enemy2, enemy3,
-							currentClip_Character, currentClip_Enemy))
+							currentClip_Character, currentClip_Enemy1,currentClip_Enemy2,currentClip_Enemy3))
 						{
 							Mix_PauseMusic();
 							Mix_PlayChannel(MIX_CHANNEL, gLose, NOT_REPEATITIVE);
 							UpdateHighScore("high_score.txt", score, highscore);
-							Quit = true;
-						}									
+							//Quit = true;
+						}
 						SDL_RenderPresent(gRenderer);
 						ControlCharFrame(frame_Character);
-						ControlEnemyFrame(frame_Enemy);		
-					}
-					frameTime = SDL_GetTicks() - frameStart;				
-					if (frameDelay > frameTime) {
-						SDL_Delay(frameDelay - frameTime);			
+						ControlBatFrame(frame_Enemy3);
+						ControlGolemFrame(frame_Enemy1);
+						ControlGolemFrame(frame_Enemy2);
 					}
 				}
 				DrawEndGameSelection(gLoseTexture, &e, gRenderer, Play_Again);
@@ -294,7 +258,6 @@ int main(int argc, char* argv[])
 					enemy2.~Enemy();
 					enemy3.~Enemy();
 				}
-				
 			}
 		}
 	}
@@ -320,7 +283,7 @@ bool Init()
 		}
 
 		gWindow = SDL_CreateWindow(WINDOW_TITLE.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-								   SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+			SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (gWindow == NULL)
 		{
 			LogError("Can not create window", SDL_ERROR);
@@ -422,7 +385,7 @@ bool LoadMedia()
 				std::cout << "Failed to render text2 texture" << std::endl;
 				success = false;
 			}
-			
+
 			if (!gMenuTexture.LoadFromFile("imgs/background/menu.png", gRenderer))
 			{
 				std::cout << "Failed to load menu image" << std::endl;

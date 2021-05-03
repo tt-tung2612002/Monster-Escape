@@ -148,7 +148,6 @@ void HandleHelpButton(SDL_Event* e,
 		case SDL_MOUSEBUTTONDOWN:
 			HelpButton.currentSprite = BUTTON_MOUSE_OVER;
 			Mix_PlayChannel(MIX_CHANNEL, gClick, NOT_REPEATITIVE);
-
 			bool ReadDone = false;
 			while (!ReadDone)
 			{
@@ -160,7 +159,6 @@ void HandleHelpButton(SDL_Event* e,
 						Quit_game = true;
 						Close();
 					}
-
 					else if (BackButton.IsInside(e, COMMON_BUTTON))
 					{
 						switch (e->type)
@@ -179,7 +177,6 @@ void HandleHelpButton(SDL_Event* e,
 					{
 						BackButton.currentSprite = BUTTON_MOUSE_OUT;
 					}
-
 					gInstructionTexture.Render(0, 0, gRenderer);
 
 					SDL_Rect* currentClip_Back = &gBackButton[BackButton.currentSprite];
@@ -265,7 +262,6 @@ void HandleContinueButton(Button ContinueButton,
 		} while (SDL_WaitEvent(e) != 0 && e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEMOTION);
 	}
 }
-
 void HandlePauseButton(SDL_Event* e,
 	SDL_Renderer* gRenderer, 
 	SDL_Rect (&gContinueButton)[BUTTON_TOTAL], 
@@ -298,66 +294,24 @@ void HandlePauseButton(SDL_Event* e,
 		PauseButton.currentSprite = BUTTON_MOUSE_OUT;
 	}
 }
-
-void GenerateEnemy(Enemy& enemy1,
-	Enemy& enemy2,
-	Enemy& enemy3,
-	SDL_Rect(&gEnemyClips)[FLYING_FRAMES], 
-	SDL_Renderer * gRenderer)
-{
-	enemy1.LoadFromFile("imgs/enemy/cactus.png", gRenderer);
-	enemy2.LoadFromFile("imgs/enemy/cactus.png", gRenderer);
-	enemy3.LoadFromFile("imgs/enemy/bat.png", gRenderer);
-	{
-		gEnemyClips[0].x = 43 * 3;
-		gEnemyClips[0].y = 0;
-		gEnemyClips[0].w = 43;
-		gEnemyClips[0].h = 30;
-
-		gEnemyClips[1].x = 43 * 4;
-		gEnemyClips[1].y = 0;
-		gEnemyClips[1].w = 43;
-		gEnemyClips[1].h = 30;
-
-		gEnemyClips[2].x = 43 * 2;
-		gEnemyClips[2].y = 0;
-		gEnemyClips[2].w = 43;
-		gEnemyClips[2].h = 30;
-
-		gEnemyClips[3].x = 43;
-		gEnemyClips[3].y = 0;
-		gEnemyClips[3].w = 43;
-		gEnemyClips[3].h = 30;
-
-		gEnemyClips[4].x = 0;
-		gEnemyClips[4].y = 0;
-		gEnemyClips[4].w = 43;
-		gEnemyClips[4].h = 30;
-	}
-}
-
 bool CheckColission(Character character,
 	SDL_Rect* char_clip,
 	Enemy enemy, 
 	SDL_Rect* enemy_clip)
 {
 	bool collide = false;
-	
 	int left_a = character.GetPosX();
 	int right_a = character.GetPosX() + char_clip->w;
 	int top_a = character.GetPosY();
 	int bottom_a = character.GetPosY() + char_clip->h;
-
 	if (enemy.GetType() == ON_GROUND_ENEMY)
 	{
 		const int TRASH_PIXEL_1 = 25;
 		const int TRASH_PIXEL_2 = 30;
-
 		int left_b = enemy.GetPosX();
 		int right_b = enemy.GetPosX() + enemy.GetWidth();
 		int top_b = enemy.GetPosY();
 		int bottom_b = enemy.GetPosY() + enemy.GetHeight();
-
 		if (right_a - TRASH_PIXEL_1 >= left_b && left_a + TRASH_PIXEL_1 <= right_b)
 		{
 			if (bottom_a - TRASH_PIXEL_2 >= top_b)
@@ -366,11 +320,29 @@ bool CheckColission(Character character,
 			}
 		}
 	}
-	else
+	else if (enemy.GetType() == IN_AIR_ENEMY)
 	{
 		const int TRASH_PIXEL_1 = 22;
 		const int TRASH_PIXEL_2 = 18;
-
+		int left_b = enemy.GetPosX() + TRASH_PIXEL_1;
+		int right_b = enemy.GetPosX() + enemy_clip->w - TRASH_PIXEL_1;
+		int top_b = enemy.GetPosY();
+		int bottom_b = enemy.GetPosY() + enemy_clip->h - TRASH_PIXEL_2;
+		if (right_a >= left_b && left_a <= right_b)
+		{
+			if (top_a <= bottom_b && top_a >= top_b)
+			{
+				collide = true;
+			}
+			if (bottom_a >= bottom_b && bottom_a <= top_b)
+			{
+				collide = true;
+			}
+		}
+	}
+	else {
+		const int TRASH_PIXEL_1 = 22;
+		const int TRASH_PIXEL_2 = 38;
 		int left_b = enemy.GetPosX() + TRASH_PIXEL_1;
 		int right_b = enemy.GetPosX() + enemy_clip->w - TRASH_PIXEL_1;
 		int top_b = enemy.GetPosY();
@@ -382,7 +354,7 @@ bool CheckColission(Character character,
 			{
 				collide = true;
 			}
-			
+
 			if (bottom_a >= bottom_b && bottom_a <= top_b)
 			{
 				collide = true;
@@ -397,18 +369,18 @@ bool CheckEnemyColission(Character character,
 	Enemy enemy2, 
 	Enemy enemy3,
 	SDL_Rect* char_clip,
-	SDL_Rect* enemy_clip
+	SDL_Rect* enemy_clip1, SDL_Rect* enemy_clip2, SDL_Rect* enemy_clip3
 	)
 {
-	if (CheckColission(character, char_clip, enemy1))
+	if (CheckColission(character, char_clip, enemy1, enemy_clip1))
 	{
 		return true;
 	}
-	if (CheckColission(character, char_clip, enemy2))
+	if (CheckColission(character, char_clip, enemy2, enemy_clip2))
 	{
 		return true;
 	}
-	if (CheckColission(character, char_clip, enemy3, enemy_clip))
+	if (CheckColission(character, char_clip, enemy3, enemy_clip3))
 	{
 		return true;
 	}
@@ -422,14 +394,22 @@ void ControlCharFrame(int &frame)
 	{
 		frame = 0;
 	}
-	
 }
 
-void ControlEnemyFrame(int &frame)
+void ControlBatFrame(int &frame)
 {
 	frame += FRAME_INCREASEMENT;
 	 
 	if (frame / SLOW_FRAME_ENEMY >= FLYING_FRAMES)
+	{
+		frame = 0;
+	}
+}
+void ControlGolemFrame(int& frame)
+{
+	frame += FRAME_INCREASEMENT;
+
+	if (frame / SLOW_FRAME_ENEMY >= 12)
 	{
 		frame = 0;
 	}
@@ -462,7 +442,6 @@ void DrawPlayerHighScore(LTexture gTextTexture,
 		gHighScoreTexture.Render(HIGH_SCORE_POSX, HIGH_SCORE_POSY, gRenderer);
 	}
 }
-
 void DrawEndGameSelection(LTexture gLoseTexture,
 	SDL_Event *e, 
 	SDL_Renderer *gRenderer,

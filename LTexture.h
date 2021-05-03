@@ -17,6 +17,7 @@ public:
 	bool LoadFromFile(std::string path, SDL_Renderer *gRenderer);
 
 	void Render(int x, int y, SDL_Renderer* gRenderer, SDL_Rect* clip = nullptr);
+	void Render(int x, int y, SDL_Renderer* gRenderer, SDL_Rect* src,int scale);
 
 	int GetWidth();
 

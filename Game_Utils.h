@@ -80,11 +80,13 @@ bool CheckEnemyColission(Character character,
     Enemy enemy2,
     Enemy enemy3,
     SDL_Rect* char_clip,
-    SDL_Rect* enemy_clip = nullptr);
+    SDL_Rect* enemy_clip1 = nullptr, SDL_Rect* enemy_clip2 = nullptr, SDL_Rect* enemy_clip3 = nullptr);
 
 void ControlCharFrame(int& frame);
 
-void ControlEnemyFrame(int& frame);
+void ControlBatFrame(int& frame);
+
+void ControlGolemFrame(int& frame);
 
 void DrawPlayerScore(LTexture gTextTexture,
     LTexture gScoreTexture,

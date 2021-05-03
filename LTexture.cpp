@@ -44,19 +44,15 @@ bool LTexture::LoadFromRenderedText(std::string textureText,TTF_Font *gFont, SDL
 			mWidth = textSurface->w;
 			mHeight = textSurface->h;
 		}
-
 		SDL_FreeSurface(textSurface);
 	}
-
 	return mTexture != NULL;
 }
 
 bool LTexture::LoadFromFile(std::string path, SDL_Renderer *gRenderer)
 {
 	Free();
-
 	SDL_Texture* tmpTexture = nullptr;
-
 	SDL_Surface* tmpSurface = IMG_Load(path.c_str());
 	if (tmpSurface == nullptr)
 	{
@@ -79,9 +75,7 @@ bool LTexture::LoadFromFile(std::string path, SDL_Renderer *gRenderer)
 
 		SDL_FreeSurface(tmpSurface);
 	}
-
 	mTexture = tmpTexture;
-
 	return mTexture != nullptr;
 }
 
@@ -97,7 +91,12 @@ void LTexture::Render(int x, int y, SDL_Renderer* gRenderer, SDL_Rect* clip)
 
 	SDL_RenderCopy(gRenderer, mTexture, clip, &renderSpace);
 }
-
+void LTexture:: Render(int x, int y, SDL_Renderer* gRenderer, SDL_Rect* src,int scale) {
+	SDL_Rect dest = { x,y,mWidth,mHeight };
+	dest.w = src->w * scale;
+	dest.h = src->h * scale;
+	SDL_RenderCopy(gRenderer, mTexture, src,&dest);
+}
 int LTexture::GetWidth()
 {
 	return mWidth;
