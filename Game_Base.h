@@ -20,12 +20,12 @@
 #define MIX_CHANNEL -1
 
 #define TIME_MAX 1000
-#define GROUND 430
-#define MAX_HEIGHT 250
+#define GROUND 400
+#define MAX_HEIGHT 260
 
 #define BASE_OFFSET_SPEED 0
 
-#define SPEED_INCREASEMENT 2
+#define SPEED_INCREASEMENT 1
 #define SCORE_INCREASEMENT 1
 #define TIME_INCREASEMENT 1
 #define FRAME_INCREASEMENT 1
@@ -73,10 +73,14 @@ const int TEXT_1_POSX = 670;
 const int TEXT_1_POSY = 20;
 const int TEXT_2_POSX = 670;
 const int TEXT_2_POSY = 80;
-const int SCORE_POSX = 830;
+const int TEXT_3_POSX = 670;
+const int TEXT_3_POSY = 140;
+const int SCORE_POSX = 845;
 const int SCORE_POSY = 20;
-const int HIGH_SCORE_POSX = 830;
+const int HIGH_SCORE_POSX = 845;
 const int HIGH_SCORE_POSY = 80;
+const int DEADTH_COUNT_POSX = 770;
+const int DEADTH_COUNT_POSY = 140;
 
 const double LAYER_1_SPEED = 0.0;
 const double LAYER_2_SPEED = 0.25; 

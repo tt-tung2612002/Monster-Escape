@@ -25,6 +25,17 @@ void Enemy:: GenerateGolem(Enemy& enemy,
 		gEnemyClips[i].h = 57;
 	}
 }
+void Enemy::GeneratePortal(Enemy& enemy,
+	SDL_Rect* gPortalClips,
+	SDL_Renderer* gRenderer) {
+	enemy.LoadFromProperties(gRenderer);
+	for (int i = 0; i < 12; i++) {
+		gPortalClips[i].x = i * 243;
+		gPortalClips[i].y = 0;
+		gPortalClips[i].w = 243;
+		gPortalClips[i].h = 206;
+	}
+}
 Enemy::Enemy(int _type)
 {
 	posX = 0;
@@ -40,14 +51,14 @@ Enemy::Enemy(int _type)
 	}
 	else if (type == ON_GROUND_ENEMY)
 	{
-		pathID = "imgs/enemy/cactus.png";
+		pathID = "imgs/enemy/portal.png";
 		posX = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
-		posY = GROUND - 8;
+		posY = GROUND-8;
 	}
 	else if (type == GOLEM){
 		pathID = "imgs/enemy/golem.png";
 		posX = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
-		posY = GROUND;
+		posY = GROUND+8;
 	}
 	EnemyTexture = nullptr;
 }
@@ -116,11 +127,11 @@ void Enemy::LoadFromProperties(SDL_Renderer* gRenderer){
 		{
 			eWidth = tmpSurface->w;
 			eHeight = tmpSurface->h;
+			
 		}
 
 		SDL_FreeSurface(tmpSurface);
 	}
-
 	EnemyTexture = tmpTexture;
 }
 void Enemy::Move(int acceleration)
@@ -142,8 +153,14 @@ void Enemy::Render(SDL_Renderer* gRenderer, SDL_Rect* currentClip)
 	SDL_Rect renderSpace = { posX, posY, eWidth, eHeight };
 	if (currentClip != nullptr)
 	{
-		renderSpace.w = currentClip->w;
-		renderSpace.h = currentClip->h;
+		if (type == GOLEM) {
+			renderSpace.w = currentClip->w + 20;
+			renderSpace.h = currentClip->h + 20;
+		}
+		else {
+			renderSpace.w = currentClip->w;
+			renderSpace.h = currentClip->h;
+		}
 	}
 	if (type == GOLEM)
 		SDL_RenderCopyEx(gRenderer, EnemyTexture, currentClip, &renderSpace, NULL, NULL, SDL_FLIP_HORIZONTAL);

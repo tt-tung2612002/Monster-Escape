@@ -3,8 +3,8 @@
 
 #include "LTexture.h"
 
-#define ENEMY_MAX_HEIGHT 300
-#define ENEMY_MIN_HEIGHT 330
+#define ENEMY_MAX_HEIGHT 240
+#define ENEMY_MIN_HEIGHT 270
 
 #define ENEMY_POSITION_RANGE 250
 #define ENEMY1_RANGE 100
@@ -27,11 +27,13 @@ public:
 	void GenerateBat(Enemy& enemy,
 		SDL_Rect* gEnemyClips,
 		SDL_Renderer* gRenderer);
+	void GeneratePortal(Enemy& enemy,
+		SDL_Rect* gPortalClips,
+		SDL_Renderer* gRenderer);
 	void GenerateGolem(Enemy& enemy,
 		SDL_Rect(&gEnemyClips)[12],
 		SDL_Renderer* gRenderer);
 	void Move(int acceleration);
-
 	void Render(SDL_Renderer* gRenderer, SDL_Rect* currentClip = nullptr);
 
 	int GetType();
@@ -46,12 +48,7 @@ public:
 
 	int GetHeight();
 private:
-	
-
 	int eWidth, eHeight;
-
-
-
 	SDL_Texture *EnemyTexture;
 };
 

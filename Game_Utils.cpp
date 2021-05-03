@@ -1,5 +1,5 @@
 #include "Game_Utils.h"
-
+#include "game.h"
 std::string GetHighScoreFromFile(std::string path)
 {
 	std::fstream HighScoreFile;
@@ -157,7 +157,7 @@ void HandleHelpButton(SDL_Event* e,
 					{
 						ReadDone = true;
 						Quit_game = true;
-						Close();
+						Game::Close();
 					}
 					else if (BackButton.IsInside(e, COMMON_BUTTON))
 					{
@@ -300,66 +300,30 @@ bool CheckColission(Character character,
 	SDL_Rect* enemy_clip)
 {
 	bool collide = false;
-	int left_a = character.GetPosX();
-	int right_a = character.GetPosX() + char_clip->w;
-	int top_a = character.GetPosY();
-	int bottom_a = character.GetPosY() + char_clip->h;
-	if (enemy.GetType() == ON_GROUND_ENEMY)
+	int left_a = character.GetPosX()+20;
+	int right_a = character.GetPosX() + char_clip->w-10;
+	int top_a = character.GetPosY()+10;
+	int bottom_a = character.GetPosY() + char_clip->h-10;
+	if (enemy.GetType() == IN_AIR_ENEMY)
 	{
-		const int TRASH_PIXEL_1 = 25;
-		const int TRASH_PIXEL_2 = 30;
-		int left_b = enemy.GetPosX();
-		int right_b = enemy.GetPosX() + enemy.GetWidth();
-		int top_b = enemy.GetPosY();
-		int bottom_b = enemy.GetPosY() + enemy.GetHeight();
-		if (right_a - TRASH_PIXEL_1 >= left_b && left_a + TRASH_PIXEL_1 <= right_b)
-		{
-			if (bottom_a - TRASH_PIXEL_2 >= top_b)
-			{
-				collide = true;
-			}
-		}
-	}
-	else if (enemy.GetType() == IN_AIR_ENEMY)
-	{
-		const int TRASH_PIXEL_1 = 22;
+		const int TRASH_PIXEL_1 = 12;
 		const int TRASH_PIXEL_2 = 18;
 		int left_b = enemy.GetPosX() + TRASH_PIXEL_1;
 		int right_b = enemy.GetPosX() + enemy_clip->w - TRASH_PIXEL_1;
 		int top_b = enemy.GetPosY();
 		int bottom_b = enemy.GetPosY() + enemy_clip->h - TRASH_PIXEL_2;
-		if (right_a >= left_b && left_a <= right_b)
-		{
-			if (top_a <= bottom_b && top_a >= top_b)
-			{
-				collide = true;
-			}
-			if (bottom_a >= bottom_b && bottom_a <= top_b)
-			{
-				collide = true;
-			}
-		}
+		if (right_a > left_b and left_a < right_b and bottom_a >top_b and top_a < bottom_b)
+			collide = true;
 	}
 	else {
-		const int TRASH_PIXEL_1 = 22;
-		const int TRASH_PIXEL_2 = 38;
+		const int TRASH_PIXEL_1 = 18;
+		const int TRASH_PIXEL_2 = 12;
 		int left_b = enemy.GetPosX() + TRASH_PIXEL_1;
 		int right_b = enemy.GetPosX() + enemy_clip->w - TRASH_PIXEL_1;
-		int top_b = enemy.GetPosY();
-		int bottom_b = enemy.GetPosY() + enemy_clip->h - TRASH_PIXEL_2;
-
-		if (right_a >= left_b && left_a <= right_b)
-		{
-			if (top_a <= bottom_b && top_a >= top_b)
-			{
-				collide = true;
-			}
-
-			if (bottom_a >= bottom_b && bottom_a <= top_b)
-			{
-				collide = true;
-			}
-		}
+		int top_b = enemy.GetPosY() - 8 + TRASH_PIXEL_2;
+		int bottom_b = enemy.GetPosY()+ enemy_clip->h - TRASH_PIXEL_2;
+		if (right_a > left_b and left_a < right_b and bottom_a >top_b and top_a < bottom_b)
+			collide = true;
 	}
 	return collide;
 }
@@ -414,7 +378,15 @@ void ControlGolemFrame(int& frame)
 		frame = 0;
 	}
 }
+void ControlPotalFrame(int& frame)
+{
+	frame += FRAME_INCREASEMENT;
 
+	if (frame / SLOW_FRAME_ENEMY >= 12)
+	{
+		frame = 0;
+	}
+}
 void DrawPlayerScore(LTexture gTextTexture,
 	LTexture gScoreTexture,
 	SDL_Color textColor,
@@ -428,7 +400,20 @@ void DrawPlayerScore(LTexture gTextTexture,
 		gScoreTexture.Render(SCORE_POSX, SCORE_POSY, gRenderer);
 	}
 }
+void DrawDeath(LTexture gTextTexture,
+	LTexture gDeathTexture,
+	SDL_Color textColor,
+	SDL_Renderer* gRenderer,
+	TTF_Font* gFont,
+	const int& deathCount) 
+{
+	gTextTexture.Render(TEXT_3_POSX, TEXT_3_POSY, gRenderer);
+	if (gDeathTexture.LoadFromRenderedText(std::to_string(deathCount), gFont, textColor, gRenderer))
+	{
+		gDeathTexture.Render(DEADTH_COUNT_POSX, DEADTH_COUNT_POSY, gRenderer);
+	}
 
+}
 void DrawPlayerHighScore(LTexture gTextTexture,
 	LTexture gHighScoreTexture, 
 	SDL_Color textColor, 

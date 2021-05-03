@@ -7,8 +7,8 @@ public:
 	}
 	~Game() {
 	}
-	static bool Init();
-	static void HandleEvents();
-	static bool LoadMedia();
+	bool Init();
+	void HandleEvents();
+	bool LoadMedia();
 	static void Close();
 };

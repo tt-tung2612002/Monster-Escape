@@ -1,6 +1,6 @@
 #include "Character.h"
 #include "Enemy.h"
-int minHeight = 410;
+int minHeight = 360;
 Character::Character()
 {
 	posX = SCREEN_WIDTH - 700;
@@ -65,12 +65,30 @@ void Character::Move()
 	{
 		posY += FALL_SPEED ;
 	}
-	
 }
-
-void Character::Render(SDL_Rect* currentClip, SDL_Renderer *gRenderer, LTexture gCharacterTexture)
+void Character::GenerateCharacter(Character& character,SDL_Rect* gCharacterClips, SDL_Renderer* gRenderer) {
+	character.LoadFromFile("imgs/character/characterPremium.png", gRenderer);
+	for (int i = 0; i < 18; i++) {
+		gCharacterClips[i].x = 57 * i;
+		gCharacterClips[i].y = 0;
+		gCharacterClips[i].w = 57;
+		gCharacterClips[i].h = 57;
+	}
+}
+void Character::LoadFromFile(std::string path, SDL_Renderer* gRenderer) {
+	SDL_Texture* tmpTexture = nullptr;
+	SDL_Surface* tmpSurface = IMG_Load(path.c_str());
+	SDL_SetColorKey(tmpSurface, SDL_TRUE, SDL_MapRGB(tmpSurface->format, 0, 255, 255));
+	tmpTexture = SDL_CreateTextureFromSurface(gRenderer, tmpSurface);
+	SDL_FreeSurface(tmpSurface);
+	CharacterTexture = tmpTexture;
+}
+void Character::Render(SDL_Renderer *gRenderer,SDL_Rect* currentClip)
 {
-	gCharacterTexture.Render(posX, posY, gRenderer, currentClip);
+	SDL_Rect renderSpace = {posX, posY, 57, 57 };
+	renderSpace.w = currentClip->w + 20;
+	renderSpace.h = currentClip->h + 20;
+	SDL_RenderCopy(gRenderer, CharacterTexture, currentClip, &renderSpace);
 }
 
 int Character::GetPosX()

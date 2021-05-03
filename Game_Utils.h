@@ -6,9 +6,6 @@
 #include "Enemy.h"
 #include "Character.h"
 
-bool Init();
-bool LoadMedia();
-void Close();
 
 std::string GetHighScoreFromFile(std::string path);
 
@@ -88,12 +85,20 @@ void ControlBatFrame(int& frame);
 
 void ControlGolemFrame(int& frame);
 
+void ControlPotalFrame(int& frame);
+
 void DrawPlayerScore(LTexture gTextTexture,
     LTexture gScoreTexture,
     SDL_Color textColor,
     SDL_Renderer* gRenderer,
     TTF_Font* gFont,
     const int& score);
+void DrawDeath(LTexture gTextTexture,
+    LTexture gScoreTexture,
+    SDL_Color textColor,
+    SDL_Renderer* gRenderer,
+    TTF_Font* gFont,
+    const int& deathCount);
 
 void DrawPlayerHighScore(LTexture gTextTexture,
     LTexture gHighScoreTexture,
