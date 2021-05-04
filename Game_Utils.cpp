@@ -378,11 +378,11 @@ void ControlGolemFrame(int& frame)
 		frame = 0;
 	}
 }
-void ControlPotalFrame(int& frame)
+void ControlPortalFrame(int& frame)
 {
 	frame += FRAME_INCREASEMENT;
 
-	if (frame / SLOW_FRAME_ENEMY >= 12)
+	if (frame / 5 >= 12)
 	{
 		frame = 0;
 	}

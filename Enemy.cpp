@@ -29,10 +29,10 @@ void Enemy::GeneratePortal(Enemy& enemy,
 	SDL_Rect* gPortalClips,
 	SDL_Renderer* gRenderer) {
 	enemy.LoadFromProperties(gRenderer);
-	for (int i = 0; i < 12; i++) {
-		gPortalClips[i].x = i * 243;
+	for (int i = 0; i < 16; i++) {
+		gPortalClips[i].x = i * 182;
 		gPortalClips[i].y = 0;
-		gPortalClips[i].w = 243;
+		gPortalClips[i].w = 182;
 		gPortalClips[i].h = 206;
 	}
 }
@@ -49,11 +49,11 @@ Enemy::Enemy(int _type)
 		posX = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
 		posY = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT + 1) + ENEMY_MIN_HEIGHT;
 	}
-	else if (type == ON_GROUND_ENEMY)
+	else if (type == PORTAL)
 	{
 		pathID = "imgs/enemy/portal.png";
-		posX = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
-		posY = GROUND-8;
+		posX = SCREEN_WIDTH;
+		posY = GROUND-20;
 	}
 	else if (type == GOLEM){
 		pathID = "imgs/enemy/golem.png";
@@ -136,8 +136,10 @@ void Enemy::LoadFromProperties(SDL_Renderer* gRenderer){
 }
 void Enemy::Move(int acceleration)
 {
-	posX += -(ENEMY_SPEED + acceleration);
-	if (posX + MAX_ENEMY_WIDTH < 0)
+	if (type == PORTAL)
+		posX += -(2 + acceleration);
+	else posX += -(ENEMY_SPEED + acceleration);
+	if (posX + MAX_ENEMY_WIDTH <= 0)
 	{
 		posX = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
 
@@ -156,6 +158,10 @@ void Enemy::Render(SDL_Renderer* gRenderer, SDL_Rect* currentClip)
 		if (type == GOLEM) {
 			renderSpace.w = currentClip->w + 20;
 			renderSpace.h = currentClip->h + 20;
+		}
+		else if (type == PORTAL) {
+			renderSpace.w = 120;
+			renderSpace.h = 120;
 		}
 		else {
 			renderSpace.w = currentClip->w;

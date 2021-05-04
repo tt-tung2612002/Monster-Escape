@@ -85,7 +85,7 @@ void ControlBatFrame(int& frame);
 
 void ControlGolemFrame(int& frame);
 
-void ControlPotalFrame(int& frame);
+void ControlPortalFrame(int& frame);
 
 void DrawPlayerScore(LTexture gTextTexture,
     LTexture gScoreTexture,

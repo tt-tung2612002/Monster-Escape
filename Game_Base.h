@@ -35,7 +35,7 @@
 #define MAX_ENEMY_WIDTH 100
 
 #define IN_AIR_ENEMY 1
-#define ON_GROUND_ENEMY 0
+#define PORTAL 0
 #define GOLEM 2
 #define SLOW_FRAME_CHAR 2
 #define SLOW_FRAME_ENEMY 4
@@ -45,7 +45,9 @@
 
 #define SMALL_BUTTON 1
 #define COMMON_BUTTON 2
-
+const int WINTER = 0;
+const int NIGHT = 1;
+const int DESERT = 2;
 const std::string WINDOW_TITLE = "Dino in jungle";
 
 const int SCREEN_WIDTH = 928;

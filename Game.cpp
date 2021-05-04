@@ -58,13 +58,14 @@ SDL_Rect gPauseButton[BUTTON_TOTAL];
 SDL_Rect gContinueButton[BUTTON_TOTAL];
 SDL_Rect gPlayAgainButton[BUTTON_TOTAL];
 SDL_Rect gCharacterClips[RUNNING_FRAMES];
-SDL_Rect gEnemyClips3[FLYING_FRAMES]; \
-SDL_Rect gPortalClips[12];
+SDL_Rect gEnemyClips3[FLYING_FRAMES]; 
+SDL_Rect gPortalClips[16];
 SDL_Rect gEnemyClips1[12];
 SDL_Rect gEnemyClips2[12];
 SDL_Rect gEnemyClipsGolem[18];
 LTexture gMenuTexture;
 LTexture gInstructionTexture;
+LTexture g_BackgroundTexture[BACKGROUND_LAYER];
 LTexture g_BackgroundTexture1[BACKGROUND_LAYER];
 LTexture g_BackgroundTexture2[BACKGROUND_LAYER];
 LTexture g_BackgroundTexture3[BACKGROUND_LAYER];
@@ -147,6 +148,7 @@ bool Game::Init() {
 	}
 	return success;
 }
+
 void Game::HandleEvents() {
 	bool Quit_Menu = false;
 	bool Play_Again = false;
@@ -183,9 +185,13 @@ void Game::HandleEvents() {
 	int deathCount = 0;
 	while (Play_Again)
 	{
-		bool speedUp = false;
-		bool speedDown = false;
-		bool keyDown = false;
+		for (int i = 0; i < 9; i++) {
+			g_BackgroundTexture[i] = g_BackgroundTexture1[i];
+		}
+		bool desert = false;
+		bool winter = true;
+		bool night = false;
+		bool createPortal = false;
 		srand(time(NULL));
 		int time = 0;
 		int score = 0;
@@ -196,27 +202,30 @@ void Game::HandleEvents() {
 		int frame_Enemy2 = 0;
 		int frame_Enemy3 = 0;
 		int frame_Portal = 0;
+		int count = 0;
 		std::string highscore = GetHighScoreFromFile("high_score.txt");
 		SDL_Event e;
 		Enemy enemy1(GOLEM);
 		Enemy enemy2(GOLEM);
 		Enemy enemy3(IN_AIR_ENEMY);
-		Enemy portal(ON_GROUND_ENEMY);
+		Enemy portal(PORTAL);
 		Mix_PlayMusic(gMusic, IS_REPEATITIVE);
 		enemy1.GenerateGolem(enemy1, gEnemyClips1, gRenderer);
 		enemy2.GenerateGolem(enemy2, gEnemyClips2, gRenderer);
 		enemy3.GenerateBat(enemy3, gEnemyClips3, gRenderer);
-		portal.GeneratePortal(portal, gPortalClips, gRenderer);
+		//portal.GeneratePortal(portal, gPortalClips, gRenderer);
 		character.GenerateCharacter(character, gCharacterClips, gRenderer);
 		int OffsetSpeed_Ground = BASE_OFFSET_SPEED;
 		std::vector <double> OffsetSpeed_Bkgr(BACKGROUND_LAYER, BASE_OFFSET_SPEED);
 		bool Quit = false;
 		bool Game_State = true;
+		int next = 0;
+		bool lose = false;
 		while (!Quit)
 		{
 			if (Game_State)
 			{
-				if (enemy1.GetPosX() >= 0 && abs(enemy1.GetPosX() - enemy2.GetPosX()) < 170 + 20*acceleration) {
+				if (enemy1.GetPosX() >= 0 && abs(enemy1.GetPosX() - enemy2.GetPosX()) < 170 + 20 * acceleration) {
 					enemy2.posX = enemy1.posX - (170 + 20 * acceleration);
 				}
 				UpdateGameTimeAndScore(time, acceleration, score);
@@ -234,29 +243,38 @@ void Game::HandleEvents() {
 				}
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 				SDL_RenderClear(gRenderer);
-				if ((score / 100) % 3 == 0)
-				{
+				if (winter) {
 					enemy1.GenerateGolem(enemy1, gEnemyClips1, gRenderer);
 					enemy2.GenerateGolem(enemy2, gEnemyClips2, gRenderer);
 					enemy1.pathID = "imgs/enemy/golem.png";
 					enemy2.pathID = "imgs/enemy/golem.png";
 					RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture1, gRenderer);
 				}
-				else if ((score / 100) % 3 == 1)
-				{
+				else if (night) {
 					enemy1.GenerateGolem(enemy1, gEnemyClips1, gRenderer);
 					enemy2.GenerateGolem(enemy2, gEnemyClips2, gRenderer);
 					enemy1.pathID = "imgs/enemy/golem3.png";
 					enemy2.pathID = "imgs/enemy/golem3.png";
 					RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
 				}
-				else if ((score / 100) % 3 == 2)
-				{
+				else {
 					enemy1.GenerateGolem(enemy1, gEnemyClips1, gRenderer);
 					enemy2.GenerateGolem(enemy2, gEnemyClips2, gRenderer);
 					enemy1.pathID = "imgs/enemy/golem2.png";
 					enemy2.pathID = "imgs/enemy/golem2.png";
 					RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
+				}
+				if ((score / 100) % 3 == 0)
+				{
+					createPortal = true;
+				}
+				else if ((score / 100) % 3 == 1)
+				{
+					createPortal = true;
+				}
+				else if ((score / 100) % 3 == 2)
+				{
+					createPortal = true;
 				}
 				character.Move();
 				SDL_Rect* currentClip_Character = nullptr;
@@ -280,8 +298,22 @@ void Game::HandleEvents() {
 				enemy2.Render(gRenderer, currentClip_Enemy2);
 				enemy3.Move(acceleration);
 				enemy3.Render(gRenderer, currentClip_Enemy3);
-				portal.Move(acceleration);
-				portal.Render(gRenderer, currentClip_Portal);
+				if (createPortal) {
+					if (desert) {
+						portal.pathID = "imgs/enemy/portal3.png";
+						portal.GeneratePortal(portal, gPortalClips, gRenderer);
+					}
+					else if (night) {
+						portal.pathID = "imgs/enemy/portal2.png";
+						portal.GeneratePortal(portal, gPortalClips, gRenderer);
+					}
+					else {
+						portal.pathID = "imgs/enemy/portal.png";
+						portal.GeneratePortal(portal, gPortalClips, gRenderer);
+					}
+					portal.Move(acceleration);
+					portal.Render(gRenderer, currentClip_Portal);
+				}
 				SDL_Rect* currentClip_Pause = &gPauseButton[PauseButton.currentSprite];
 				PauseButton.Render(currentClip_Pause, gRenderer, gPauseButtonTexture);
 				DrawPlayerScore(gText1Texture, gScoreTexture, textColor, gRenderer, gFont, score);
@@ -291,27 +323,63 @@ void Game::HandleEvents() {
 					enemy1, enemy2, enemy3,
 					currentClip_Character, currentClip_Enemy1, currentClip_Enemy2, currentClip_Enemy3))
 				{
-					cout << "hello "<< endl;
 					deathCount++;
 					Mix_PauseMusic();
 					Mix_PlayChannel(MIX_CHANNEL, gLose, NOT_REPEATITIVE);
 					UpdateHighScore("high_score.txt", score, highscore);
 					Quit = true;
+					DrawEndGameSelection(gLoseTexture, &e, gRenderer, Play_Again);
+					if (!Play_Again)
+					{
+						enemy1.~Enemy();
+						enemy2.~Enemy();
+						enemy3.~Enemy();
+					}
+					continue;
+				}
+				if (CheckColission(character, currentClip_Character, portal, currentClip_Portal)) {
+					createPortal = false;
+					if (desert) {
+						desert = false;
+						winter = true;
+						SDL_RenderPresent(gRenderer);
+						ControlCharFrame(frame_Character);
+						ControlBatFrame(frame_Enemy3);
+						ControlGolemFrame(frame_Enemy1);
+						ControlGolemFrame(frame_Enemy2);
+						ControlPortalFrame(frame_Portal);
+						continue;
+					}
+					else if (night) {
+						night = false;
+						desert = true;
+						SDL_RenderPresent(gRenderer);
+						ControlCharFrame(frame_Character);
+						ControlBatFrame(frame_Enemy3);
+						ControlGolemFrame(frame_Enemy1);
+						ControlGolemFrame(frame_Enemy2);
+						ControlPortalFrame(frame_Portal);
+						continue;
+					}
+					else if (winter) {
+						winter = false;
+						night = true;
+						SDL_RenderPresent(gRenderer);
+						ControlCharFrame(frame_Character);
+						ControlBatFrame(frame_Enemy3);
+						ControlGolemFrame(frame_Enemy1);
+						ControlGolemFrame(frame_Enemy2);
+						ControlPortalFrame(frame_Portal);
+						continue;
+					}
 				}
 				SDL_RenderPresent(gRenderer);
 				ControlCharFrame(frame_Character);
 				ControlBatFrame(frame_Enemy3);
 				ControlGolemFrame(frame_Enemy1);
 				ControlGolemFrame(frame_Enemy2);
-				ControlPotalFrame(frame_Portal);
+				ControlPortalFrame(frame_Portal);
 			}
-		}
-		DrawEndGameSelection(gLoseTexture, &e, gRenderer, Play_Again);
-		if (!Play_Again)
-		{
-			enemy1.~Enemy();
-			enemy2.~Enemy();
-			enemy3.~Enemy();
 		}
 	}
 
@@ -497,7 +565,6 @@ bool Game:: LoadMedia() {
 					success = false;
 				}
 			}
-
 			for (int i = 0; i < BACKGROUND_LAYER; ++i)
 			{
 				if (!g_BackgroundTexture2[i].LoadFromFile(SCENCE2[i].c_str(), gRenderer))
@@ -521,7 +588,7 @@ bool Game:: LoadMedia() {
 				std::cout << "Failed to load ground image" << std::endl;
 				success = false;
 			}
-			if (!gLoseTexture.LoadFromFile("imgs/background/lose.png", gRenderer))
+			if (!gLoseTexture.LoadFromFile("imgs/background/lose2.png", gRenderer))
 			{
 				std::cout << "Failed to load lose image." << std::endl;
 				success = false;
