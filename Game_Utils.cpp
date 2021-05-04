@@ -458,7 +458,7 @@ void DrawEndGameSelection(LTexture gLoseTexture,
 					}
 				}
 			}
-
+			
 			gLoseTexture.Render(0, 0, gRenderer);
 
 			SDL_RenderPresent(gRenderer);

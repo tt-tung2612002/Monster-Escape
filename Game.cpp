@@ -90,7 +90,6 @@ Button BackButton(BACK_BUTTON_POSX, BACK_BUTTON_POSY);
 Button PauseButton(PAUSE_BUTTON_POSX, PAUSE_BUTTON_POSY);
 Button ContinueButton(CONTINUE_BUTTON_POSX, CONTINUE_BUTTON_POSY);
 Character character;
-
 bool Game::Init() {
 	bool success = true;
 
@@ -99,8 +98,10 @@ bool Game::Init() {
 		LogError("Can not initialize SDL.", SDL_ERROR);
 		success = false;
 	}
+
 	else
 	{
+		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
 		{
 			std::cout << "Warning: Linear texture filtering not enabled!";
@@ -115,7 +116,7 @@ bool Game::Init() {
 		}
 		else
 		{
-			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_WINDOW_OPENGL);
 			if (gRenderer == NULL)
 			{
 				LogError("Can not create renderer", SDL_ERROR);
@@ -223,8 +224,9 @@ void Game::HandleEvents() {
 		bool lose = false;
 		while (!Quit)
 		{
+			
 			if (Game_State)
-			{
+			{		
 				if (enemy1.GetPosX() >= 0 && abs(enemy1.GetPosX() - enemy2.GetPosX()) < 170 + 20 * acceleration) {
 					enemy2.posX = enemy1.posX - (170 + 20 * acceleration);
 				}
@@ -264,15 +266,7 @@ void Game::HandleEvents() {
 					enemy2.pathID = "imgs/enemy/golem2.png";
 					RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
 				}
-				if ((score / 100) % 3 == 0)
-				{
-					createPortal = true;
-				}
-				else if ((score / 100) % 3 == 1)
-				{
-					createPortal = true;
-				}
-				else if ((score / 100) % 3 == 2)
+				if (score >= 150 && score % 150 ==0 )
 				{
 					createPortal = true;
 				}
@@ -334,42 +328,115 @@ void Game::HandleEvents() {
 						enemy1.~Enemy();
 						enemy2.~Enemy();
 						enemy3.~Enemy();
-					}
-					continue;
+					}			
 				}
-				if (CheckColission(character, currentClip_Character, portal, currentClip_Portal)) {
+				if (CheckColission(character, currentClip_Character, portal, currentClip_Portal)) {			
 					createPortal = false;
 					if (desert) {
 						desert = false;
 						winter = true;
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
 						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture1, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
 						ControlCharFrame(frame_Character);
 						ControlBatFrame(frame_Enemy3);
 						ControlGolemFrame(frame_Enemy1);
 						ControlGolemFrame(frame_Enemy2);
 						ControlPortalFrame(frame_Portal);
+						portal.posX = -100;
+						enemy1.posX = -100;
+						enemy2.posX = -100;
+						enemy3.posX = -100;
 						continue;
 					}
 					else if (night) {
 						night = false;
 						desert = true;
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
 						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture1, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
 						ControlCharFrame(frame_Character);
 						ControlBatFrame(frame_Enemy3);
 						ControlGolemFrame(frame_Enemy1);
 						ControlGolemFrame(frame_Enemy2);
 						ControlPortalFrame(frame_Portal);
+						portal.~Enemy();
+						enemy1.posX = -100;
+						enemy2.posX = -100;
+						enemy3.posX = -100;
 						continue;
 					}
 					else if (winter) {
 						winter = false;
-						night = true;
+						night = true;	
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
 						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture1, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
+						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
+						SDL_RenderPresent(gRenderer);
+						SDL_RenderClear(gRenderer);
+						SDL_Delay(38);
 						ControlCharFrame(frame_Character);
 						ControlBatFrame(frame_Enemy3);
 						ControlGolemFrame(frame_Enemy1);
 						ControlGolemFrame(frame_Enemy2);
 						ControlPortalFrame(frame_Portal);
+						portal.~Enemy();
+						enemy1.posX = -100;
+						enemy2.posX = -100;
+						enemy3.posX = -100;
 						continue;
 					}
 				}
@@ -378,9 +445,11 @@ void Game::HandleEvents() {
 				ControlBatFrame(frame_Enemy3);
 				ControlGolemFrame(frame_Enemy1);
 				ControlGolemFrame(frame_Enemy2);
-				ControlPortalFrame(frame_Portal);
+				ControlPortalFrame(frame_Portal);	
 			}
+			
 		}
+		
 	}
 
 }
@@ -588,7 +657,7 @@ bool Game:: LoadMedia() {
 				std::cout << "Failed to load ground image" << std::endl;
 				success = false;
 			}
-			if (!gLoseTexture.LoadFromFile("imgs/background/lose2.png", gRenderer))
+			if (!gLoseTexture.LoadFromFile("imgs/background/lose.png", gRenderer))
 			{
 				std::cout << "Failed to load lose image." << std::endl;
 				success = false;

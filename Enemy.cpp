@@ -65,9 +65,13 @@ Enemy::Enemy(int _type)
 
 Enemy::~Enemy()
 {
-	posX = 0;
-	posY = 0;
-
+	
+	if (type == PORTAL) {
+		posY = GROUND - 20;
+		posX = -100;
+	}
+	else
+		posY = 0;
 	eWidth = 0;
 	eHeight = 0;
 
