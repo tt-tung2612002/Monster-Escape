@@ -7,7 +7,7 @@
  for exceptional graphics and a bit of diversity in the
  gameplay mechanic, Monster Escape would be highly 
 recommended.
------
+
 
 ## Features
 
@@ -20,5 +20,5 @@ recommended.
 
 ## How to play
 
-- Press and release Up Arrow ↑ to jump and dodge obstacles
-- Press SPACE to play again
+* **Press and release Up Arrow ↑ to jump and dodge obstacles**
+* **Press SPACE to play again**
