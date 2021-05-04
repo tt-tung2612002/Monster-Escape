@@ -37,6 +37,12 @@
 #define IN_AIR_ENEMY 1
 #define PORTAL 0
 #define GOLEM 2
+#define DINO 0
+#define MINOTOUR1 1
+#define MINOTOUR2 2
+#define MINOTOUR3 3
+
+
 #define SLOW_FRAME_CHAR 2
 #define SLOW_FRAME_ENEMY 4
 

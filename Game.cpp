@@ -89,7 +89,9 @@ Button ExitButton(EXIT_BUTTON_POSX, EXIT_BUTTON_POSY);
 Button BackButton(BACK_BUTTON_POSX, BACK_BUTTON_POSY);
 Button PauseButton(PAUSE_BUTTON_POSX, PAUSE_BUTTON_POSY);
 Button ContinueButton(CONTINUE_BUTTON_POSX, CONTINUE_BUTTON_POSY);
-Character character;
+Character character(MINOTOUR1);
+//Character character2;
+//Character character3;
 bool Game::Init() {
 	bool success = true;
 
@@ -216,6 +218,7 @@ void Game::HandleEvents() {
 		enemy3.GenerateBat(enemy3, gEnemyClips3, gRenderer);
 		//portal.GeneratePortal(portal, gPortalClips, gRenderer);
 		character.GenerateCharacter(character, gCharacterClips, gRenderer);
+
 		int OffsetSpeed_Ground = BASE_OFFSET_SPEED;
 		std::vector <double> OffsetSpeed_Bkgr(BACKGROUND_LAYER, BASE_OFFSET_SPEED);
 		bool Quit = false;
@@ -250,6 +253,7 @@ void Game::HandleEvents() {
 					enemy2.GenerateGolem(enemy2, gEnemyClips2, gRenderer);
 					enemy1.pathID = "imgs/enemy/golem.png";
 					enemy2.pathID = "imgs/enemy/golem.png";
+					//portal.pathID = "imgs/enemy/portal.png";
 					RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture1, gRenderer);
 				}
 				else if (night) {
@@ -257,6 +261,7 @@ void Game::HandleEvents() {
 					enemy2.GenerateGolem(enemy2, gEnemyClips2, gRenderer);
 					enemy1.pathID = "imgs/enemy/golem3.png";
 					enemy2.pathID = "imgs/enemy/golem3.png";
+					//portal.pathID = "imgs/enemy/portal2.png";
 					RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
 				}
 				else {
@@ -264,9 +269,10 @@ void Game::HandleEvents() {
 					enemy2.GenerateGolem(enemy2, gEnemyClips2, gRenderer);
 					enemy1.pathID = "imgs/enemy/golem2.png";
 					enemy2.pathID = "imgs/enemy/golem2.png";
+					//portal.pathID = "imgs/enemy/portal3.png";
 					RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
 				}
-				if (score >= 150 && score % 150 ==0 )
+				if (score >= 150 && score % 150 == 0 )
 				{
 					createPortal = true;
 				}
@@ -293,17 +299,17 @@ void Game::HandleEvents() {
 				enemy3.Move(acceleration);
 				enemy3.Render(gRenderer, currentClip_Enemy3);
 				if (createPortal) {
-					if (desert) {
+					if (desert) {				
+						portal.GeneratePortal(portal, gPortalClips, gRenderer);
 						portal.pathID = "imgs/enemy/portal3.png";
-						portal.GeneratePortal(portal, gPortalClips, gRenderer);
 					}
-					else if (night) {
+					else if (night) {					
+						portal.GeneratePortal(portal, gPortalClips, gRenderer);
 						portal.pathID = "imgs/enemy/portal2.png";
-						portal.GeneratePortal(portal, gPortalClips, gRenderer);
 					}
-					else {
-						portal.pathID = "imgs/enemy/portal.png";
+					else {	
 						portal.GeneratePortal(portal, gPortalClips, gRenderer);
+						portal.pathID = "imgs/enemy/portal.png";
 					}
 					portal.Move(acceleration);
 					portal.Render(gRenderer, currentClip_Portal);
@@ -328,15 +334,14 @@ void Game::HandleEvents() {
 						enemy1.~Enemy();
 						enemy2.~Enemy();
 						enemy3.~Enemy();
+						portal.~Enemy();
 					}			
 				}
-				if (CheckColission(character, currentClip_Character, portal, currentClip_Portal)) {			
+				if (CheckColission(character, currentClip_Character, portal, currentClip_Portal) && createPortal) {			
 					createPortal = false;
 					if (desert) {
 						desert = false;
 						winter = true;
-						SDL_RenderClear(gRenderer);
-						SDL_Delay(38);
 						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
 						SDL_RenderPresent(gRenderer);
 						SDL_RenderClear(gRenderer);
@@ -355,23 +360,21 @@ void Game::HandleEvents() {
 						SDL_Delay(38);
 						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
 						SDL_RenderPresent(gRenderer);
-						SDL_RenderClear(gRenderer);
-						SDL_Delay(38);
+						
+						portal.posX = -100;
+						enemy1.posX = -100;
+						enemy2.posX = -100;
+						enemy3.posX = -100;
 						ControlCharFrame(frame_Character);
 						ControlBatFrame(frame_Enemy3);
 						ControlGolemFrame(frame_Enemy1);
 						ControlGolemFrame(frame_Enemy2);
 						ControlPortalFrame(frame_Portal);
-						portal.posX = -100;
-						enemy1.posX = -100;
-						enemy2.posX = -100;
-						enemy3.posX = -100;
 						continue;
 					}
 					else if (night) {
 						night = false;
 						desert = true;
-						SDL_Delay(38);
 						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
 						SDL_RenderPresent(gRenderer);
 						SDL_RenderClear(gRenderer);
@@ -390,24 +393,20 @@ void Game::HandleEvents() {
 						SDL_Delay(38);
 						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
 						SDL_RenderPresent(gRenderer);
-						SDL_RenderClear(gRenderer);
-						SDL_Delay(38);
+						portal.posX = -100;
+						enemy1.posX = -100;
+						enemy2.posX = -100;
+						enemy3.posX = -100;
 						ControlCharFrame(frame_Character);
 						ControlBatFrame(frame_Enemy3);
 						ControlGolemFrame(frame_Enemy1);
 						ControlGolemFrame(frame_Enemy2);
 						ControlPortalFrame(frame_Portal);
-						portal.~Enemy();
-						enemy1.posX = -100;
-						enemy2.posX = -100;
-						enemy3.posX = -100;
 						continue;
 					}
 					else if (winter) {
 						winter = false;
 						night = true;	
-						SDL_RenderClear(gRenderer);
-						SDL_Delay(38);
 						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
 						SDL_RenderPresent(gRenderer);
 						SDL_RenderClear(gRenderer);
@@ -425,18 +424,16 @@ void Game::HandleEvents() {
 						SDL_RenderClear(gRenderer);
 						SDL_Delay(38);
 						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
-						SDL_RenderPresent(gRenderer);
-						SDL_RenderClear(gRenderer);
-						SDL_Delay(38);
+						SDL_RenderPresent(gRenderer);			
+						portal.posX = -100;
+						enemy1.posX = -100;
+						enemy2.posX = -100;
+						enemy3.posX = -100;
 						ControlCharFrame(frame_Character);
 						ControlBatFrame(frame_Enemy3);
 						ControlGolemFrame(frame_Enemy1);
 						ControlGolemFrame(frame_Enemy2);
 						ControlPortalFrame(frame_Portal);
-						portal.~Enemy();
-						enemy1.posX = -100;
-						enemy2.posX = -100;
-						enemy3.posX = -100;
 						continue;
 					}
 				}

@@ -11,11 +11,12 @@
 class Character
 {
 public:
+	int type;
 	int posX, posY;
 	static const int JUMP_SPEED = 8;
 	static const int FALL_SPEED = 8;
-
-	Character();
+	std::string pathID;
+	Character(int type_);
 	~Character() {}
 	bool OnGround();
 
@@ -25,6 +26,7 @@ public:
 		SDL_Renderer* gRenderer);
 	void Move();
 	void LoadFromFile(std::string path, SDL_Renderer* gRenderer);
+	void LoadFromProperties(SDL_Renderer* gRenderer);
 	void Render(SDL_Renderer *gRenderer, SDL_Rect* currentClip = nullptr);
 
 	int GetPosX();

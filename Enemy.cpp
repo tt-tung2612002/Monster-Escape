@@ -65,16 +65,10 @@ Enemy::Enemy(int _type)
 
 Enemy::~Enemy()
 {
-	
-	if (type == PORTAL) {
-		posY = GROUND - 20;
-		posX = -100;
-	}
-	else
-		posY = 0;
+	posX = 0;
+	posY = 0;
 	eWidth = 0;
 	eHeight = 0;
-
 	type = 0;
 	if (EnemyTexture != nullptr)
 	{
