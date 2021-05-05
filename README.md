@@ -28,4 +28,4 @@ recommended.
 * **Press SPACE to play again**
 
 ## References
-[Dino-In-Jungle](https://github.com/Flushz/Dino_in_Zungle)
+[Dino In Jungle](https://github.com/Flushz/Dino_in_Zungle)
