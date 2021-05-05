@@ -263,7 +263,7 @@ void HandleExitButton(SDL_Event* e,
 	}
 }
 
-void HandleContinueButton(Button ContinueButton,
+void HandleContinueButton	(Button ContinueButton,
 	LTexture gContinueButtonTexture,
 	SDL_Event* e,
 	SDL_Renderer* gRenderer,
@@ -371,7 +371,6 @@ bool CheckColission(Character character,
 	}
 	return collide;
 }
-
 bool CheckEnemyColission(Character character,
 	Enemy enemy1,
 	Enemy enemy2, 

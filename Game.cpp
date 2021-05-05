@@ -61,8 +61,6 @@ SDL_Rect gPlayAgainButton[BUTTON_TOTAL];
 SDL_Rect gSoundButton[BUTTON_TOTAL];
 SDL_Rect gInfoButton[BUTTON_TOTAL];
 SDL_Rect gSettingButton[BUTTON_TOTAL];
-
-
 SDL_Rect gCharacterClips[RUNNING_FRAMES];
 SDL_Rect gEnemyClips3[FLYING_FRAMES]; 
 SDL_Rect gPortalClips[16];
@@ -77,17 +75,12 @@ LTexture g_BackgroundTexture2[BACKGROUND_LAYER];
 LTexture g_BackgroundTexture3[BACKGROUND_LAYER];
 LTexture gGroundTexture;
 LTexture gPlayButtonTexture;
-//LTexture gHelpButtonTexture;
 LTexture gExitButtonTexture;
 LTexture gBackButtonTexture;
 LTexture gPauseButtonTexture;
-
-
 LTexture gSoundButtonTexture;
 LTexture gInfoButtonTexture;
 LTexture gSettingButtonTexture;
-
-
 LTexture gContinueButtonTexture;
 LTexture gLoseTexture;
 LTexture gText1Texture;
@@ -238,7 +231,6 @@ void Game::HandleEvents() {
 		enemy3.GenerateBat(enemy3, gEnemyClips3, gRenderer);
 		//portal.GeneratePortal(portal, gPortalClips, gRenderer);
 		character.GenerateCharacter(character, gCharacterClips, gRenderer);
-
 		int OffsetSpeed_Ground = BASE_OFFSET_SPEED;
 		std::vector <double> OffsetSpeed_Bkgr(BACKGROUND_LAYER, BASE_OFFSET_SPEED);
 		bool Quit = false;

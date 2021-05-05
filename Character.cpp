@@ -64,7 +64,7 @@ void Character::Move()
 	}
 	if (status == FALL && posY < GROUND)
 	{
-		posY += FALL_SPEED ;
+		posY += FALL_SPEED;
 	}
 }
 void Character::GenerateCharacter(Character& character,SDL_Rect* gCharacterClips, SDL_Renderer* gRenderer) {
