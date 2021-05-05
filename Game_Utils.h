@@ -18,12 +18,6 @@ int UpdateGameTimeAndScore(int& time, int& speed, int& score);
 void RenderScrollingBackground(std::vector <double>& offsetSpeed,
     LTexture(&gBackgroundTexture)[BACKGROUND_LAYER],
     SDL_Renderer* gRenderer);
-
-void RenderScrollingGround(int& speed,
-    const int acceleration,
-    LTexture gGroundTexture,
-    SDL_Renderer* gRenderer);
-
 void HandlePlayButton(SDL_Event* e,
     Button& PlayButton,
     bool& QuitMenu,
@@ -45,12 +39,10 @@ void HandleInfoButton(SDL_Event* e,
     SDL_Renderer* gRenderer,
     bool& Quit_game,
     Mix_Chunk* gClick);
-
 void HandleExitButton(SDL_Event* e,
     Button& ExitButton,
     bool& Quit,
     Mix_Chunk* gClick);
-
 void HandleContinueButton(Button ContinueButton,
     LTexture gContinueButtonTexture,
     SDL_Event* e,

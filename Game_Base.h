@@ -54,7 +54,7 @@
 const int WINTER = 0;
 const int NIGHT = 1;
 const int DESERT = 2;
-const std::string WINDOW_TITLE = "Dino in jungle";
+const std::string WINDOW_TITLE = "Monster Run";
 
 const int SCREEN_WIDTH = 928;
 const int SCREEN_HEIGHT = 522;

@@ -14,7 +14,6 @@ bool Character::OnGround()
 {
 	return posY == GROUND;
 }
-
 void Character::HandleEvent(SDL_Event& e, Mix_Chunk *gJump)
 {
 	if (e.type == SDL_KEYDOWN)
