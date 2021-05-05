@@ -59,17 +59,17 @@ const std::string WINDOW_TITLE = "Dino in jungle";
 const int SCREEN_WIDTH = 928;
 const int SCREEN_HEIGHT = 522;
 
-const int COMMON_BUTTON_WIDTH = 150;
-const int COMMON_BUTTON_HEIGHT = 98;
+const int COMMON_BUTTON_WIDTH = 130;
+const int COMMON_BUTTON_HEIGHT = 45;
 const int SMALL_BUTTON_WIDTH = 22;
 const int SMALL_BUTTON_HEIGHT = 34;
 
-const int PLAY_BUTON_POSX = 389;
-const int PLAY_BUTTON_POSY= 186;
+const int PLAY_BUTON_POSX = 399;
+const int PLAY_BUTTON_POSY= 392;
 const int HELP_BUTTON_POSX = 389;
 const int HELP_BUTTON_POSY = 293;
-const int EXIT_BUTTON_POSX = 389;
-const int EXIT_BUTTON_POSY = 402;
+const int EXIT_BUTTON_POSX = 399;
+const int EXIT_BUTTON_POSY = 440;
 const int BACK_BUTTON_POSX = 31;
 const int BACK_BUTTON_POSY = 29;
 const int PAUSE_BUTTON_POSX = 31;

@@ -15,6 +15,7 @@ Mix_Music* gMusic = nullptr;
 Mix_Music* gMenuMusic = nullptr;
 Mix_Chunk* gClick = nullptr;
 Mix_Chunk* gJump = nullptr;
+Mix_Chunk* gTele = nullptr;
 Mix_Chunk* gLose = nullptr;
 const std::string SCENCE1[BACKGROUND_LAYER] = {
 	"imgs/background/Scence_01.png",
@@ -57,6 +58,11 @@ SDL_Rect gBackButton[BUTTON_TOTAL];
 SDL_Rect gPauseButton[BUTTON_TOTAL];
 SDL_Rect gContinueButton[BUTTON_TOTAL];
 SDL_Rect gPlayAgainButton[BUTTON_TOTAL];
+SDL_Rect gSoundButton[BUTTON_TOTAL];
+SDL_Rect gInfoButton[BUTTON_TOTAL];
+SDL_Rect gSettingButton[BUTTON_TOTAL];
+
+
 SDL_Rect gCharacterClips[RUNNING_FRAMES];
 SDL_Rect gEnemyClips3[FLYING_FRAMES]; 
 SDL_Rect gPortalClips[16];
@@ -71,10 +77,17 @@ LTexture g_BackgroundTexture2[BACKGROUND_LAYER];
 LTexture g_BackgroundTexture3[BACKGROUND_LAYER];
 LTexture gGroundTexture;
 LTexture gPlayButtonTexture;
-LTexture gHelpButtonTexture;
+//LTexture gHelpButtonTexture;
 LTexture gExitButtonTexture;
 LTexture gBackButtonTexture;
 LTexture gPauseButtonTexture;
+
+
+LTexture gSoundButtonTexture;
+LTexture gInfoButtonTexture;
+LTexture gSettingButtonTexture;
+
+
 LTexture gContinueButtonTexture;
 LTexture gLoseTexture;
 LTexture gText1Texture;
@@ -85,6 +98,9 @@ LTexture gText3Texture;
 LTexture gHighScoreTexture;
 Button PlayButton(PLAY_BUTON_POSX, PLAY_BUTTON_POSY);
 Button HelpButton(HELP_BUTTON_POSX, HELP_BUTTON_POSY);
+Button SoundButton(852, 12);
+Button InfoButton(852, 70);
+Button SettingButton(852, 128);
 Button ExitButton(EXIT_BUTTON_POSX, EXIT_BUTTON_POSY);
 Button BackButton(BACK_BUTTON_POSX, BACK_BUTTON_POSY);
 Button PauseButton(PAUSE_BUTTON_POSX, PAUSE_BUTTON_POSY);
@@ -168,19 +184,23 @@ void Game::HandleEvents() {
 
 			bool Quit_Game = false;
 			HandlePlayButton(&e_mouse, PlayButton, Quit_Menu, Play_Again, gClick);
-
-			HandleHelpButton(&e_mouse, gBackButton,
-				HelpButton, BackButton,
+			HandleInfoButton(&e_mouse, gBackButton,
+				InfoButton, BackButton,
 				gInstructionTexture, gBackButtonTexture,
 				gRenderer, Quit_Game, gClick);
-
+			HandleSoundButton(&e_mouse, SoundButton, gClick);
 			HandleExitButton(&e_mouse, ExitButton, Quit_Menu, gClick);
+			HandleSettingButton(&e_mouse, SettingButton, gClick);
 		}
 		gMenuTexture.Render(0, 0, gRenderer);
 		SDL_Rect* currentClip_Play = &gPlayButton[PlayButton.currentSprite];
 		PlayButton.Render(currentClip_Play, gRenderer, gPlayButtonTexture);
-		SDL_Rect* currentClip_Help = &gHelpButton[HelpButton.currentSprite];
-		HelpButton.Render(currentClip_Help, gRenderer, gHelpButtonTexture);
+		SDL_Rect* currentClip_Sound = &gSoundButton[SoundButton.currentSprite];
+		SoundButton.Render(currentClip_Sound, gRenderer, gSoundButtonTexture);
+		SDL_Rect* currentClip_Info = &gInfoButton[InfoButton.currentSprite];
+		InfoButton.Render(currentClip_Info, gRenderer, gInfoButtonTexture);
+		SDL_Rect* currentClip_Setting = &gSettingButton[SettingButton.currentSprite];
+		SettingButton.Render(currentClip_Setting, gRenderer, gSettingButtonTexture);
 		SDL_Rect* currentClip_Exit = &gExitButton[ExitButton.currentSprite];
 		ExitButton.Render(currentClip_Exit, gRenderer, gExitButtonTexture);
 		SDL_RenderPresent(gRenderer);
@@ -226,8 +246,7 @@ void Game::HandleEvents() {
 		int next = 0;
 		bool lose = false;
 		while (!Quit)
-		{
-			
+		{	
 			if (Game_State)
 			{		
 				if (enemy1.GetPosX() >= 0 && abs(enemy1.GetPosX() - enemy2.GetPosX()) < 170 + 20 * acceleration) {
@@ -272,7 +291,7 @@ void Game::HandleEvents() {
 					//portal.pathID = "imgs/enemy/portal3.png";
 					RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
 				}
-				if (score >= 150 && score % 150 == 0 )
+				if (score >= 180 && score % 180 == 0 )
 				{
 					createPortal = true;
 				}
@@ -339,9 +358,11 @@ void Game::HandleEvents() {
 				}
 				if (CheckColission(character, currentClip_Character, portal, currentClip_Portal) && createPortal) {			
 					createPortal = false;
+					Mix_PlayChannel(MIX_CHANNEL, gTele, NOT_REPEATITIVE);
+					SDL_Delay(38);
 					if (desert) {
 						desert = false;
-						winter = true;
+						winter = true;		
 						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture3, gRenderer);
 						SDL_RenderPresent(gRenderer);
 						SDL_RenderClear(gRenderer);
@@ -359,8 +380,7 @@ void Game::HandleEvents() {
 						SDL_RenderClear(gRenderer);
 						SDL_Delay(38);
 						RenderScrollingBackground(OffsetSpeed_Bkgr, g_BackgroundTexture2, gRenderer);
-						SDL_RenderPresent(gRenderer);
-						
+						SDL_RenderPresent(gRenderer);		
 						portal.posX = -100;
 						enemy1.posX = -100;
 						enemy2.posX = -100;
@@ -453,20 +473,20 @@ void Game::HandleEvents() {
 bool Game:: LoadMedia() {
 	bool success = true;
 
-	gMusic = Mix_LoadMUS("sound/bkgr_audio.wav");
+	gMusic = Mix_LoadMUS("sound/bkgr_audio2.wav");
 	if (gMusic == nullptr)
 	{
 		LogError("Failed to load background music", MIX_ERROR);
 		success = false;
 	}
 
-	gMenuMusic = Mix_LoadMUS("sound/menu_audio.wav");
+	gMenuMusic = Mix_LoadMUS("sound/background.wav");
 	if (gMenuMusic == nullptr)
 	{
 		LogError("Failed to load menu music", MIX_ERROR);
 		success = false;
 	}
-
+	gTele = Mix_LoadWAV("sound/tele.wav");
 	gClick = Mix_LoadWAV("sound/mouse_click.wav");
 	if (gClick == nullptr)
 	{
@@ -515,19 +535,19 @@ bool Game:: LoadMedia() {
 				success = false;
 			}
 
-			if (!gMenuTexture.LoadFromFile("imgs/background/menu.png", gRenderer))
+			if (!gMenuTexture.LoadFromFile("imgs/background/test.png", gRenderer))
 			{
 				std::cout << "Failed to load menu image" << std::endl;
 				success = false;
 			}
 
-			if (!gInstructionTexture.LoadFromFile("imgs/background/instruction.png", gRenderer))
+			if (!gInstructionTexture.LoadFromFile("imgs/background/info.png", gRenderer))
 			{
 				std::cout << "Failed to load instruction image" << std::endl;
 				success = false;
 			}
 
-			if (!gPlayButtonTexture.LoadFromFile("imgs/button/big_button/play_button.png", gRenderer))
+			if (!gPlayButtonTexture.LoadFromFile("imgs/button/big_button/play.png", gRenderer))
 			{
 				std::cout << "Failed to load play_button image" << std::endl;
 				success = false;
@@ -536,29 +556,12 @@ bool Game:: LoadMedia() {
 			{
 				for (int i = 0; i < BUTTON_TOTAL; ++i)
 				{
-					gPlayButton[i].x = 150 * i;
+					gPlayButton[i].x = 130 * i;
 					gPlayButton[i].y = 0;
-					gPlayButton[i].w = 150;
-					gPlayButton[i].h = 98;
+					gPlayButton[i].w = 130;
+					gPlayButton[i].h = 45;
 				}
 			}
-
-			if (!gHelpButtonTexture.LoadFromFile("imgs/button/big_button/help_button.png", gRenderer))
-			{
-				std::cout << "Failed to load help_button image" << std::endl;
-				success = false;
-			}
-			else
-			{
-				for (int i = 0; i < BUTTON_TOTAL; ++i)
-				{
-					gHelpButton[i].x = 150 * i;
-					gHelpButton[i].y = 0;
-					gHelpButton[i].w = 150;
-					gHelpButton[i].h = 98;
-				}
-			}
-
 			if (!gBackButtonTexture.LoadFromFile("imgs/button/big_button/back_button.png", gRenderer))
 			{
 				std::cout << "Failed to load back_button image" << std::endl;
@@ -568,14 +571,14 @@ bool Game:: LoadMedia() {
 			{
 				for (int i = 0; i < BUTTON_TOTAL; ++i)
 				{
-					gBackButton[i].x = 100 * i;
+					gBackButton[i].x = 57 * i;
 					gBackButton[i].y = 0;
-					gBackButton[i].w = 100;
-					gBackButton[i].h = 78;
+					gBackButton[i].w = 57;
+					gBackButton[i].h = 57;
 				}
 			}
 
-			if (!gExitButtonTexture.LoadFromFile("imgs/button/big_button/exit_button.png", gRenderer))
+			if (!gExitButtonTexture.LoadFromFile("imgs/button/big_button/quit.png", gRenderer))
 			{
 				std::cout << "Failed to load exit_button image" << std::endl;
 				success = false;
@@ -584,13 +587,36 @@ bool Game:: LoadMedia() {
 			{
 				for (int i = 0; i < BUTTON_TOTAL; ++i)
 				{
-					gExitButton[i].x = 150 * i;
+					gExitButton[i].x = 130 * i;
 					gExitButton[i].y = 0;
-					gExitButton[i].w = 150;
-					gExitButton[i].h = 98;
+					gExitButton[i].w = 130;
+					gExitButton[i].h = 45;
 				}
 			}
-
+			gSoundButtonTexture.LoadFromFile("imgs/button/big_button/audio.png", gRenderer);
+			for (int i = 0; i < BUTTON_TOTAL; ++i)
+			{
+				gSoundButton[i].x = 57 * i;
+				gSoundButton[i].y = 0;
+				gSoundButton[i].w = 57;
+				gSoundButton[i].h = 57;
+			}
+			gInfoButtonTexture.LoadFromFile("imgs/button/big_button/info.png", gRenderer);
+			for (int i = 0; i < BUTTON_TOTAL; ++i)
+			{
+				gInfoButton[i].x = 57 * i;
+				gInfoButton[i].y = 0;
+				gInfoButton[i].w = 57;
+				gInfoButton[i].h = 57;
+			}
+			gSettingButtonTexture.LoadFromFile("imgs/button/big_button/setting.png", gRenderer);
+			for (int i = 0; i < BUTTON_TOTAL; ++i)
+			{
+				gSettingButton[i].x = 57 * i;
+				gSettingButton[i].y = 0;
+				gSettingButton[i].w = 57;
+				gSettingButton[i].h = 57;
+			}
 			if (!gPauseButtonTexture.LoadFromFile("imgs/button/big_button/pause_button.png", gRenderer))
 			{
 				std::cout << "Failed to load pause_button image " << std::endl;
@@ -600,10 +626,10 @@ bool Game:: LoadMedia() {
 			{
 				for (int i = 0; i < BUTTON_TOTAL; ++i)
 				{
-					gPauseButton[i].x = 22 * i;
+					gPauseButton[i].x = 57 * i;
 					gPauseButton[i].y = 0;
-					gPauseButton[i].w = 22;
-					gPauseButton[i].h = 34;
+					gPauseButton[i].w = 57;
+					gPauseButton[i].h = 57;
 				}
 			}
 
@@ -616,10 +642,10 @@ bool Game:: LoadMedia() {
 			{
 				for (int i = 0; i < BUTTON_TOTAL; ++i)
 				{
-					gContinueButton[i].x = 22 * i;
+					gContinueButton[i].x = 57 * i;
 					gContinueButton[i].y = 0;
-					gContinueButton[i].w = 22;
-					gContinueButton[i].h = 34;
+					gContinueButton[i].w = 57;
+					gContinueButton[i].h = 57;
 				}
 			}
 
@@ -668,7 +694,9 @@ void Game::Close() {
 	gInstructionTexture.Free();
 	gGroundTexture.Free();
 	gPlayButtonTexture.Free();
-	gHelpButtonTexture.Free();
+	gInfoButtonTexture.Free();
+	gSettingButtonTexture.Free();
+	gSoundButtonTexture.Free();
 	gExitButtonTexture.Free();
 	gBackButtonTexture.Free();
 	gPauseButtonTexture.Free();
@@ -700,11 +728,13 @@ void Game::Close() {
 	Mix_FreeChunk(gClick);
 	Mix_FreeChunk(gLose);
 	Mix_FreeChunk(gJump);
+	Mix_FreeChunk(gTele);
 	gMusic = nullptr;
 	gMenuMusic = nullptr;
 	gClick = nullptr;
 	gLose = nullptr;
 	gJump = nullptr;
+	gTele = nullptr;
 
 	SDL_DestroyRenderer(gRenderer);
 	gRenderer = nullptr;

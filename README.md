@@ -22,3 +22,6 @@ recommended.
 
 * **Press and release Up Arrow ↑ to jump and dodge obstacles**
 * **Press SPACE to play again**
+
+## References
+[Dino-In-Jungle] (https://github.com/Flushz/Dino_in_Zungle)

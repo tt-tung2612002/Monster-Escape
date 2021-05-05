@@ -127,8 +127,52 @@ void HandlePlayButton(SDL_Event* e,
 		PlayButton.currentSprite = BUTTON_MOUSE_OUT;
 	}
 }
-
-void HandleHelpButton(SDL_Event* e,
+bool soundOn = true;
+void HandleSoundButton(SDL_Event* e,
+	Button& SoundButton,
+	Mix_Chunk* gClick) {
+	if (SoundButton.IsInside(e, COMMON_BUTTON))
+	{
+		switch (e->type)
+		{
+		case SDL_MOUSEBUTTONDOWN:
+			if (!soundOn) {
+				soundOn = true;
+				Mix_PlayChannel(MIX_CHANNEL, gClick, 0);
+				Mix_ResumeMusic();
+				SoundButton.currentSprite = BUTTON_MOUSE_OUT;
+				break;
+			}
+			else if (soundOn){
+				soundOn = false;
+				Mix_PlayChannel(MIX_CHANNEL, gClick, 0);
+				Mix_PauseMusic();
+				SoundButton.currentSprite = BUTTON_MOUSE_OVER;
+				break;
+			}
+		}
+	}
+	if (soundOn)
+		SoundButton.currentSprite = BUTTON_MOUSE_OUT;
+}
+void HandleSettingButton(SDL_Event* e,
+	Button& SettingButton,
+	Mix_Chunk* gClick) {
+	if (SettingButton.IsInside(e, COMMON_BUTTON))
+	{
+		switch (e->type)
+		{
+		case SDL_MOUSEMOTION:
+			SettingButton.currentSprite = BUTTON_MOUSE_OVER;
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			Mix_PlayChannel(MIX_CHANNEL, gClick, 0);
+			break;
+		}
+	}
+	else SettingButton.currentSprite = BUTTON_MOUSE_OUT;
+}
+void HandleInfoButton(SDL_Event* e,
 	SDL_Rect(&gBackButton)[BUTTON_TOTAL],
 	Button& HelpButton, 
 	Button& BackButton, 

@@ -29,8 +29,14 @@ void HandlePlayButton(SDL_Event* e,
     bool& QuitMenu,
     bool& Play,
     Mix_Chunk* gClick);
+void HandleSoundButton(SDL_Event* e,
+    Button& SoundButton,
+    Mix_Chunk* gClick);
+void HandleSettingButton(SDL_Event* e,
+    Button& SoundButton,
+    Mix_Chunk* gClick);
 
-void HandleHelpButton(SDL_Event* e,
+void HandleInfoButton(SDL_Event* e,
     SDL_Rect(&gBackButton)[BUTTON_TOTAL],
     Button& HelpButton,
     Button& BackButton,
