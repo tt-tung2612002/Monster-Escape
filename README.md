@@ -24,4 +24,5 @@ recommended.
 * **Press SPACE to play again**
 
 ## References
-[DinoInJungle] (https://github.com/Flushz/Dino_in_Zungle)
+[MIT](https://choosealicense.com/licenses/mit/)
+[DinoInJungle](https://github.com/Flushz/Dino_in_Zungle)
